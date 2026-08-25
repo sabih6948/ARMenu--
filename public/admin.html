@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARMenu — Kitchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:    #fbfaf7;
+    --paper-2:  #ffffff;
+    --ink:      #22211d;
+    --ink-dim:  #8a867a;
+    --sage:     #3f6b58;
+    --sage-lt:  #eef2ef;
+    --line:     #e4e0d6;
+    --err:      #b6503b;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px;
+  }
+
+  h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--ink);
+  }
+  h1 span { color: var(--sage); font-style: normal; font-weight: 700; }
+
+  .count {
+    font-size: 12px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  form {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 28px 28px 24px;
+    position: relative;
+    margin-bottom: 48px;
+    box-shadow: 0 1px 2px rgba(34,33,29,0.03);
+  }
+
+  form::before {
+    content: "NEW ITEM";
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    background: var(--sage);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-dim);
+  }
+
+  input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14px;
+    padding: 6px 2px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  input:focus { border-bottom-color: var(--sage); }
+  input::placeholder { color: #c2beb0; }
+
+  input[type="file"] { font-size: 12px; padding-top: 8px; }
+  input[type="file"]::file-selector-button {
+    background: var(--sage-lt);
+    color: var(--sage);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 2px;
+    font-family: inherit;
+    font-size: 11px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+
+  button[type="submit"] {
+    margin-top: 22px;
+    width: 100%;
+    background: var(--sage);
+    color: #fff;
+    border: none;
+    border-radius: 2px;
+    padding: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  button[type="submit"]:hover { background: #345b49; }
+  button[type="submit"]:disabled { opacity: 0.5; cursor: default; }
+
+  #status { margin-top: 12px; font-size: 12px; min-height: 16px; color: var(--sage); }
+  #status.error { color: var(--err); }
+
+  .items { display: flex; flex-direction: column; }
+
+  .ticket {
+    display: grid;
+    grid-template-columns: 28px 1fr auto auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 4px;
+    border-bottom: 1px dashed var(--line);
+    font-size: 13px;
+  }
+  .ticket:first-child { border-top: 1px dashed var(--line); }
+  .ticket .idx { color: var(--ink-dim); font-size: 11px; }
+
+  .ticket .name {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .ticket .meta {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--ink-dim);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .ticket .price { color: var(--sage); font-weight: 500; }
+
+  .ticket button {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    font-family: inherit;
+    font-size: 11px;
+    padding: 5px 9px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .ticket button:hover { border-color: var(--err); color: var(--err); }
+
+  .empty {
+    color: var(--ink-dim);
+    font-size: 13px;
+    padding: 24px 4px;
+    text-align: center;
+    border-top: 1px dashed var(--line);
+  }
+
+  /* --- Login screen --- */
+  #loginScreen {
+    max-width: 340px;
+    margin: 100px auto 0;
+    text-align: center;
+  }
+  #loginScreen h1 { justify-content: center; }
+  #loginScreen .lock {
+    font-size: 11px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+  }
+  #loginScreen input {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    width: 100%;
+    font-size: 14px;
+  }
+  #loginScreen input:focus { border-color: var(--sage); }
+  #loginScreen button {
+    width: 100%;
+    background: var(--sage);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 11px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  #loginScreen button:hover { background: #345b49; }
+  #loginStatus { margin-top: 10px; font-size: 12px; color: var(--err); min-height: 14px; }
+
+  #adminPanel { display: none; }
+  #logoutBtn {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-left: 12px;
+  }
+  #logoutBtn:hover { border-color: var(--err); color: var(--err); }
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <h1>Kitchen <span>pass</span></h1>
+  <div class="lock">Staff access only</div>
+  <input type="text" id="loginUser" placeholder="Username">
+  <input type="password" id="loginPass" placeholder="Password">
+  <button onclick="doLogin()">Log in</button>
+  <div id="loginStatus"></div>
+</div>
+
+<div class="wrap" id="adminPanel">
+
+  <header>
+    <h1>Kitchen <span>pass</span> <button id="logoutBtn" onclick="doLogout()">Log out</button></h1>
+    <div class="count" id="count">— items</div>
+  </header>
+
+  <form id="uploadForm">
+    <div class="grid">
+      <div class="field">
+        <label for="name">Dish name</label>
+        <input id="name" type="text" name="name" placeholder="Char siu noodles" required>
+      </div>
+      <div class="field">
+        <label for="category">Category</label>
+        <input id="category" type="text" name="category" placeholder="Main" required>
+      </div>
+      <div class="field">
+        <label for="price">Price (Rs.)</label>
+        <input id="price" type="number" name="price" placeholder="650" required>
+      </div>
+      <div class="field">
+        <label for="description">Description</label>
+        <input id="description" type="text" name="description" placeholder="Optional">
+      </div>
+      <div class="field full">
+        <label for="modelFile">3D model (.glb)</label>
+        <input id="modelFile" type="file" name="modelFile" accept=".glb" required>
+      </div>
+    </div>
+    <button type="submit">Send to kitchen</button>
+    <div id="status"></div>
+  </form>
+
+  <div class="items" id="items"></div>
+
+</div>
+
+<script>
+  // --- Auth ---
+  function getToken() { return localStorage.getItem('adminToken'); }
+
+  function showApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadItems();
+  }
+
+  async function doLogin() {
+    const username = document.getElementById('loginUser').value;
+    const password = document.getElementById('loginPass').value;
+    const loginStatus = document.getElementById('loginStatus');
+    loginStatus.textContent = '';
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Login failed');
+      localStorage.setItem('adminToken', data.token);
+      showApp();
+    } catch (err) {
+      loginStatus.textContent = err.message;
+    }
+  }
+
+  function doLogout() {
+    localStorage.removeItem('adminToken');
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'block';
+  }
+
+  if (getToken()) showApp();
+
+  // --- Menu management ---
+  const form = document.getElementById('uploadForm');
+  const status = document.getElementById('status');
+  const submitBtn = form.querySelector('button[type="submit"]');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    status.className = '';
+    status.textContent = 'Uploading…';
+    const formData = new FormData(form);
+
+    try {
+      const res = await fetch('/api/menu', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${getToken()}` },
+        body: formData
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+      status.textContent = `Added — ${data.name}`;
+      form.reset();
+      loadItems();
+    } catch (err) {
+      status.className = 'error';
+      status.textContent = err.message;
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  async function loadItems() {
+    const res = await fetch('/api/menu');
+    const items = await res.json();
+    const container = document.getElementById('items');
+    document.getElementById('count').textContent =
+      `${items.length} item${items.length === 1 ? '' : 's'}`;
+
+    if (!items.length) {
+      container.innerHTML = '<div class="empty">No items yet — the pass is empty.</div>';
+      return;
+    }
+
+    container.innerHTML = items.map((item, i) => `
+      <div class="ticket">
+        <span class="idx">${String(i + 1).padStart(2, '0')}</span>
+        <span>
+          <span class="name">${item.name}</span>
+          <span class="meta">${item.category} · ${item.modelFile}</span>
+        </span>
+        <span class="price">Rs. ${item.price}</span>
+        <button onclick="deleteItem('${item._id}')">Remove</button>
+      </div>
+    `).join('');
+  }
+
+  async function deleteItem(id) {
+    await fetch(`/api/menu/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    loadItems();
+  }
+</script>
+</body>
+</html>

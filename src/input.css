@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --color-forest-900: #12201b;
+  --color-forest-800: #16241f;
+  --color-forest-700: #1f342c;
+  --color-forest-600: #2a453a;
+
+  --color-cream: #f2eee3;
+  --color-cream-dim: #f2eee3b3;
+
+  --color-ember: #d97b3f;
+  --color-ember-dark: #b8632e;
+
+  --font-display: "Cormorant Garamond", serif;
+  --font-body: "Inter", sans-serif;
+}
