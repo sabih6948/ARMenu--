@@ -4,6 +4,8 @@ import { fileURLToPath } from "url";
 import connectDB from "../config/db.js";
 import menuRoutes from "../routes/menuRoutes.js";
 import authRoutes from "../routes/authRoutes.js";
+import qrRoutes from "../routes/qrRoutes.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,5 +23,6 @@ app.use((req, res, next) => {
 
 app.use("/api/menu", menuRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/qr", qrRoutes);
 
 export default app;
