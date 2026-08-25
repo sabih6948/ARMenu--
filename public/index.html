@@ -123,11 +123,11 @@
       display: none;
     }
 
-  .view-grid .menu-item h2 {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  }
+    .view-grid .menu-item h2 {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   </style>
 </head>
 
@@ -139,7 +139,7 @@
   <!-- Drawer trigger -->
   <button
     id="drawerTrigger"
-    class="fixed top-5 left-5 z-30 flex items-center gap-2 bg-forest-700 border border-forest-600 rounded-full pl-3 pr-4 py-2 text-xs text-cream hover:border-ember transition"
+    class="fixed top-5 left-5 z-30 flex items-center gap-2 bg-forest-700 border border-forest-600 rounded-full pl-3 pr-4 py-2 text-xs text-cream hover:border-ember transition cursor-pointer"
     onclick="openDrawer()"
   >
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -148,6 +148,18 @@
       <line x1="4" y1="17" x2="20" y2="17"></line>
     </svg>
     Menu
+  </button>
+
+  <!-- Donate Button on Top Right -->
+  <button
+    id="donateBtn"
+    onclick="handleDonate()"
+    class="fixed top-5 right-5 z-30 flex items-center gap-2 bg-ember hover:bg-ember-dark text-forest-900 font-semibold px-4 py-2 rounded-full text-xs transition shadow-lg cursor-pointer"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+    </svg>
+    Donate (Safepay)
   </button>
 
   <!-- Overlay -->
@@ -164,7 +176,7 @@
   >
     <div class="flex items-center justify-between px-5 pt-6 pb-4 border-b border-forest-600">
       <span class="font-display text-xl text-ember italic">Categories</span>
-      <button onclick="closeDrawer()" class="text-cream-dim hover:text-cream" aria-label="Close menu">
+      <button onclick="closeDrawer()" class="text-cream-dim hover:text-cream cursor-pointer" aria-label="Close menu">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -225,14 +237,14 @@
     <div class="flex justify-end gap-2 mb-6">
       <button
         id="gridViewBtn"
-        class="text-xs px-3 py-1.5 rounded border border-forest-600 text-cream-dim hover:text-cream"
+        class="text-xs px-3 py-1.5 rounded border border-forest-600 text-cream-dim hover:text-cream cursor-pointer"
         onclick="setView('grid')"
       >
         Grid
       </button>
       <button
         id="listViewBtn"
-        class="text-xs px-3 py-1.5 rounded border border-ember bg-ember text-forest-900 font-semibold"
+        class="text-xs px-3 py-1.5 rounded border border-ember bg-ember text-forest-900 font-semibold cursor-pointer"
         onclick="setView('list')"
       >
         List
@@ -271,13 +283,13 @@
 
       document.getElementById("gridViewBtn").className =
         view === "grid"
-          ? "text-xs px-3 py-1.5 rounded border border-ember bg-ember text-forest-900 font-semibold"
-          : "text-xs px-3 py-1.5 rounded border border-forest-600 text-cream-dim hover:text-cream";
+          ? "text-xs px-3 py-1.5 rounded border border-ember bg-ember text-forest-900 font-semibold cursor-pointer"
+          : "text-xs px-3 py-1.5 rounded border border-forest-600 text-cream-dim hover:text-cream cursor-pointer";
 
       document.getElementById("listViewBtn").className =
         view === "list"
-          ? "text-xs px-3 py-1.5 rounded border border-ember bg-ember text-forest-900 font-semibold"
-          : "text-xs px-3 py-1.5 rounded border border-forest-600 text-cream-dim hover:text-cream";
+          ? "text-xs px-3 py-1.5 rounded border border-ember bg-ember text-forest-900 font-semibold cursor-pointer"
+          : "text-xs px-3 py-1.5 rounded border border-forest-600 text-cream-dim hover:text-cream cursor-pointer";
 
       applyFilters();
     }
@@ -316,7 +328,7 @@
         .map(
           (cat) => `
             <button
-              class="cat-row w-full flex items-center gap-3 px-5 py-3 text-left text-sm text-cream"
+              class="cat-row w-full flex items-center gap-3 px-5 py-3 text-left text-sm text-cream cursor-pointer"
               data-cat="${slugify(cat)}"
               onclick="scrollToCategory('${slugify(cat)}')"
             >
@@ -433,16 +445,60 @@
             id="mv-${item._id}"
           ></model-viewer>
 
-          <button
-          class=" block mx-auto px-4 py-2.5 rounded-md 
-                   bg-ember hover:bg-ember-dark text-forest-900
-                   text-xs font-semibold tracking-wide cursor-pointer"
-            onclick="document.getElementById('mv-${item._id}').activateAR()"
-          >
-            View on your table
-          </button>
+          <div class="p-4 space-y-2">
+            <button
+              class="w-full block mx-auto px-4 py-2.5 rounded-md 
+                     bg-ember hover:bg-ember-dark text-forest-900
+                     text-xs font-semibold tracking-wide cursor-pointer text-center"
+              onclick="document.getElementById('mv-${item._id}').activateAR()"
+            >
+              View on your table
+            </button>
+            
+          </div>
         </div>
       `;
+    }
+
+    async function handleDonate() {
+      const amount = prompt("Enter donation amount in PKR:", "500");
+      if (!amount || isNaN(amount)) return;
+
+      try {
+        const response = await fetch('/api/payment/create-checkout', { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: Number(amount), type: 'donation' })
+        });
+        const data = await response.json();
+        
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+        } else {
+          alert('Could not initialize donation session.');
+        }
+      } catch (error) {
+        console.error('Donation error:', error);
+      }
+    }
+
+    async function handlePayment(itemId) {
+      try {
+        const response = await fetch('/api/payment/create-checkout', { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ itemId })
+        });
+        const data = await response.json();
+        
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+        } else {
+          alert('Could not initialize payment session.');
+        }
+      } catch (error) {
+        console.error('Payment error:', error);
+      }
     }
 
     fetch("/api/menu")

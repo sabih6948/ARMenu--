@@ -6,8 +6,10 @@ import connectDB from './config/db.js';
 import menuRoutes from './routes/menuRoutes.js';
 import authRoutes from './routes/authRoutes.js'
 import qrRoutes from './routes/qrRoutes.js';
+import payRoutes from './routes/payRoutes.js';
 
-console.log("Testing git commit using bash cli")
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -21,6 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/menu', menuRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/qr', qrRoutes);
+app.use('/api/payment' , payRoutes);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
