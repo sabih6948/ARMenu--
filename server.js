@@ -7,7 +7,7 @@ import menuRoutes from './routes/menuRoutes.js';
 import authRoutes from './routes/authRoutes.js'
 import qrRoutes from './routes/qrRoutes.js';
 
-
+console.log("Testing git commit using bash cli")
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
