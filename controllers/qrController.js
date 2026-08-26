@@ -1,10 +1,16 @@
-import QRCode from 'qrcode';
+import QRCode from "qrcode";
 
 export const getQrCode = async (req, res) => {
   try {
-    const protocol = req.headers['x-forwarded-proto'] || req.protocol;
-    const host = req.get('host');
-    const menuUrl = `${protocol}://${host}/`;
+    let menuUrl;
+
+    if (process.env.PUBLIC_BASE_URL) {
+      menuUrl = process.env.PUBLIC_BASE_URL.replace(/\/$/, "") + "/";
+    } else {
+      const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+      const host = req.get("host");
+      menuUrl = `${protocol}://${host}/`;
+    }
 
     const qrDataUrl = await QRCode.toDataURL(menuUrl, {
       width: 300,

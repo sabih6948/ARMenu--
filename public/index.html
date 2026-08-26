@@ -1,320 +1,378 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ARMenu</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARMenu</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap"
-    rel="stylesheet"
-  >
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="/css/output.css" />
 
-  <script
-    type="module"
-    src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"
-  ></script>
+    <script
+      type="module"
+      src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"
+    ></script>
 
-  <style>
-    model-viewer::part(default-ar-button) {
-      display: none;
-    }
-
-    @keyframes ember-pulse {
-      0%, 100% {
-        opacity: 0.35;
-        transform: translateY(-50%) scale(1);
+    <style>
+      model-viewer::part(default-ar-button) {
+        display: none;
       }
-      50% {
-        opacity: 0.55;
-        transform: translateY(-50%) scale(1.08);
+
+      @keyframes ember-pulse {
+        0%,
+        100% {
+          opacity: 0.35;
+          transform: translateY(-50%) scale(1);
+        }
+        50% {
+          opacity: 0.55;
+          transform: translateY(-50%) scale(1.08);
+        }
       }
-    }
 
-    .ember-glow {
-      position: fixed;
-      top: 50%;
-      width: 260px;
-      height: 260px;
-      border-radius: 9999px;
-      background: radial-gradient(
-        circle,
-        rgba(217, 123, 63, 0.55) 0%,
-        rgba(217, 123, 63, 0.18) 45%,
-        transparent 70%
-      );
-      filter: blur(40px);
-      pointer-events: none;
-      z-index: 0;
-      animation: ember-pulse 7s ease-in-out infinite;
-    }
-
-    .ember-glow--left {
-      left: -120px;
-      animation-delay: 0s;
-    }
-
-    .ember-glow--right {
-      right: -120px;
-      animation-delay: 3.5s;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
       .ember-glow {
-        animation: none;
-        opacity: 0.3;
+        position: fixed;
+        top: 50%;
+        width: 260px;
+        height: 260px;
+        border-radius: 9999px;
+        background: radial-gradient(
+          circle,
+          rgba(217, 123, 63, 0.55) 0%,
+          rgba(217, 123, 63, 0.18) 45%,
+          transparent 70%
+        );
+        filter: blur(40px);
+        pointer-events: none;
+        z-index: 0;
+        animation: ember-pulse 7s ease-in-out infinite;
       }
-    }
 
-    header, main, .search-wrap {
-      position: relative;
-      z-index: 1;
-    }
+      .ember-glow--left {
+        left: -120px;
+        animation-delay: 0s;
+      }
 
-    /* Drawer */
-    #drawer {
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-    }
+      .ember-glow--right {
+        right: -120px;
+        animation-delay: 3.5s;
+      }
 
-    #drawer.is-open {
-      transform: translateX(0);
-    }
+      @media (prefers-reduced-motion: reduce) {
+        .ember-glow {
+          animation: none;
+          opacity: 0.3;
+        }
+      }
 
-    #drawerOverlay {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
+      header,
+      main,
+      .search-wrap {
+        position: relative;
+        z-index: 1;
+      }
 
-    #drawerOverlay.is-open {
-      opacity: 1;
-      pointer-events: auto;
-    }
+      /* Drawer */
+      #drawer {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
 
-    .cat-row {
-      transition: background-color 0.15s ease, color 0.15s ease;
-    }
+      #drawer.is-open {
+        transform: translateX(0);
+      }
 
-    .cat-row.is-active {
-      background-color: var(--color-forest-600);
-      color: var(--color-ember);
-    }
+      #drawerOverlay {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
 
-    .cat-row.is-active .cat-icon {
-      background-color: var(--color-ember);
-      color: var(--color-forest-900);
-    }
+      #drawerOverlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
 
-    /* Grid view: two columns, shorter model-viewer */
-    .view-grid .menu-item {
-      display: flex;
-      flex-direction: column;
-    }
+      .cat-row {
+        transition:
+          background-color 0.15s ease,
+          color 0.15s ease;
+      }
 
-    .view-grid model-viewer {
-      height: 180px !important;
-    }
+      .cat-row.is-active {
+        background-color: var(--color-forest-600);
+        color: var(--color-ember);
+      }
 
-    .view-grid .item-desc {
-      display: none;
-    }
+      .cat-row.is-active .cat-icon {
+        background-color: var(--color-ember);
+        color: var(--color-forest-900);
+      }
 
-  .view-grid .menu-item h2 {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  }
-  </style>
-</head>
+      /* Grid view: two columns, shorter model-viewer */
+      .view-grid .menu-item {
+        display: flex;
+        flex-direction: column;
+      }
 
-<body class="m-0 bg-forest-800 text-cream font-body relative overflow-x-hidden">
+      .view-grid model-viewer {
+        height: 180px !important;
+      }
 
-  <div class="ember-glow ember-glow--left"></div>
-  <div class="ember-glow ember-glow--right"></div>
+      .view-grid .item-desc {
+        display: none;
+      }
 
-  <!-- Drawer trigger -->
-  <button
-    id="drawerTrigger"
-    class="fixed top-5 left-5 z-30 flex items-center gap-2 bg-forest-700 border border-forest-600 rounded-full pl-3 pr-4 py-2 text-xs text-cream hover:border-ember transition"
-    onclick="openDrawer()"
+      .view-grid .menu-item h2 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    </style>
+  </head>
+
+  <body
+    class="m-0 bg-forest-800 text-cream font-body relative overflow-x-hidden"
   >
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <line x1="4" y1="7" x2="20" y2="7"></line>
-      <line x1="4" y1="12" x2="20" y2="12"></line>
-      <line x1="4" y1="17" x2="20" y2="17"></line>
-    </svg>
-    Menu
-  </button>
+    <div class="ember-glow ember-glow--left"></div>
+    <div class="ember-glow ember-glow--right"></div>
 
-  <!-- Overlay -->
-  <div
-    id="drawerOverlay"
-    class="fixed inset-0 bg-black/60 z-30"
-    onclick="closeDrawer()"
-  ></div>
-
-  <!-- Drawer -->
-  <aside
-    id="drawer"
-    class="fixed top-0 left-0 h-full w-72 bg-forest-700 border-r border-forest-600 z-40 overflow-y-auto"
-  >
-    <div class="flex items-center justify-between px-5 pt-6 pb-4 border-b border-forest-600">
-      <span class="font-display text-xl text-ember italic">Categories</span>
-      <button onclick="closeDrawer()" class="text-cream-dim hover:text-cream" aria-label="Close menu">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-
-    <nav class="py-3" id="catDrawerList"></nav>
-  </aside>
-
-  <header class="max-w-2xl mx-auto text-center px-6 pt-20 pb-8">
-    <p class="text-xs tracking-[0.25em] uppercase text-ember mb-4">
-      Scan &middot; View &middot; Order
-    </p>
-
-    <h1 class="font-display italic text-5xl sm:text-6xl leading-tight mb-5">
-      بیٹھک<br class="sm:hidden">
-    </h1>
-
-    <p class="text-sm text-cream-dim max-w-sm mx-auto leading-relaxed">
-      Point your camera at the table and place any dish in front of you
-      before it arrives.
-    </p>
-  </header>
-
-  <!-- Search bar -->
-  <div class="search-wrap max-w-md mx-auto px-6 pb-8">
-    <div class="relative">
+    <!-- Drawer trigger -->
+    <button
+      id="drawerTrigger"
+      class="fixed top-5 left-5 z-30 flex items-center gap-2 bg-forest-700 border border-forest-600 rounded-full pl-3 pr-4 py-2 text-xs text-cream hover:border-ember transition"
+      onclick="openDrawer()"
+    >
       <svg
-        class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-cream-dim pointer-events-none"
+        width="16"
+        height="16"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
         stroke-width="2"
         stroke-linecap="round"
-        stroke-linejoin="round"
       >
-        <circle cx="11" cy="11" r="7"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        <line x1="4" y1="7" x2="20" y2="7"></line>
+        <line x1="4" y1="12" x2="20" y2="12"></line>
+        <line x1="4" y1="17" x2="20" y2="17"></line>
       </svg>
+      Menu
+    </button>
 
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Search the menu&hellip;"
-        autocomplete="off"
-        class="w-full bg-forest-700 border border-forest-600 rounded-full
-               pl-11 pr-4 py-3 text-sm text-cream placeholder-cream-dim
-               focus:outline-none focus:border-ember transition"
-        oninput="handleSearch(this.value)"
+  <!-- Donate button -->
+  <button
+    id="donateBtn"
+    class="fixed top-5 right-5 z-30 flex items-center gap-2 bg-ember hover:bg-ember-dark text-forest-900 rounded-full pl-3 pr-4 py-2 text-xs font-semibold transition"
+    onclick="startDonation()"
+  >
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 21s-6.716-4.35-9.428-8.28C.665 10.09 1.1 6.5 4.2 4.9 6.6 3.66 9.3 4.6 12 7.2c2.7-2.6 5.4-3.54 7.8-2.3 3.1 1.6 3.535 5.19 1.628 7.82C18.716 16.65 12 21 12 21z"/>
+    </svg>
+    Donate (Safepay)
+  </button>
+
+    <!-- Overlay -->
+    <div
+      id="drawerOverlay"
+      class="fixed inset-0 bg-black/60 z-30"
+      onclick="closeDrawer()"
+    ></div>
+
+    <!-- Drawer -->
+    <aside
+      id="drawer"
+      class="fixed top-0 left-0 h-full w-72 bg-forest-700 border-r border-forest-600 z-40 overflow-y-auto"
+    >
+      <div
+        class="flex items-center justify-between px-5 pt-6 pb-4 border-b border-forest-600"
       >
-    </div>
-  </div>
+        <span class="font-display text-xl text-ember italic">Categories</span>
+        <button
+          onclick="closeDrawer()"
+          class="text-cream-dim hover:text-cream"
+          aria-label="Close menu"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
 
-  <div class="max-w-2xl mx-auto px-6 pb-24">
+      <nav class="py-3" id="catDrawerList"></nav>
+    </aside>
 
-    <!-- View toggle -->
-    <div class="flex justify-end gap-2 mb-6">
-      <button
-        id="gridViewBtn"
-        class="text-xs px-3 py-1.5 rounded border border-forest-600 text-cream-dim hover:text-cream"
-        onclick="setView('grid')"
-      >
-        Grid
-      </button>
-      <button
-        id="listViewBtn"
-        class="text-xs px-3 py-1.5 rounded border border-ember bg-ember text-forest-900 font-semibold"
-        onclick="setView('list')"
-      >
-        List
-      </button>
-    </div>
-
-    <main id="menu">
-      <p class="text-center text-cream-dim text-sm py-16">
-        Setting the table&hellip;
+    <header class="max-w-2xl mx-auto text-center px-6 pt-20 pb-8">
+      <p class="text-xs tracking-[0.25em] uppercase text-ember mb-4">
+        Scan &middot; View &middot; Order
       </p>
-    </main>
 
-  </div>
+      <h1 class="font-display italic text-5xl sm:text-6xl leading-tight mb-5">
+        بیٹھک<br class="sm:hidden" />
+      </h1>
 
-  <script>
-    let currentView = "list";
-    let currentSearch = "";
-    let cachedItems = [];
-    let sectionObserver = null;
+      <p class="text-sm text-cream-dim max-w-sm mx-auto leading-relaxed">
+        Point your camera at the table and place any dish in front of you before
+        it arrives.
+      </p>
+    </header>
 
-    function openDrawer() {
-      document.getElementById("drawer").classList.add("is-open");
-      document.getElementById("drawerOverlay").classList.add("is-open");
-    }
+    <!-- Search bar -->
+    <div class="search-wrap max-w-md mx-auto px-6 pb-8">
+      <div class="relative">
+        <svg
+          class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-cream-dim pointer-events-none"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
 
-    function closeDrawer() {
-      document.getElementById("drawer").classList.remove("is-open");
-      document.getElementById("drawerOverlay").classList.remove("is-open");
-    }
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search the menu&hellip;"
+          autocomplete="off"
+          class="w-full bg-forest-700 border border-forest-600 rounded-full pl-11 pr-4 py-3 text-sm text-cream placeholder-cream-dim focus:outline-none focus:border-ember transition"
+          oninput="handleSearch(this.value)"
+        />
+      </div>
+    </div>
 
-    function setView(view) {
-      currentView = view;
+    <div class="max-w-2xl mx-auto px-6 pb-24">
+      <!-- View toggle -->
+      <div class="flex justify-end gap-2 mb-6">
+        <button
+          id="gridViewBtn"
+          class="text-xs px-3 py-1.5 rounded border border-forest-600 text-cream-dim hover:text-cream"
+          onclick="setView('grid')"
+        >
+          Grid
+        </button>
+        <button
+          id="listViewBtn"
+          class="text-xs px-3 py-1.5 rounded border border-ember bg-ember text-forest-900 font-semibold"
+          onclick="setView('list')"
+        >
+          List
+        </button>
+      </div>
 
-      const menu = document.getElementById("menu");
-      menu.className = view === "grid" ? "view-grid grid grid-cols-2 gap-4" : "space-y-8";
+      <main id="menu">
+        <p class="text-center text-cream-dim text-sm py-16">
+          Setting the table&hellip;
+        </p>
+      </main>
+    </div>
 
-      document.getElementById("gridViewBtn").className =
-        view === "grid"
-          ? "text-xs px-3 py-1.5 rounded border border-ember bg-ember text-forest-900 font-semibold"
-          : "text-xs px-3 py-1.5 rounded border border-forest-600 text-cream-dim hover:text-cream";
+    <script>
+      let currentView = "list";
+      let currentSearch = "";
+      let cachedItems = [];
+      let sectionObserver = null;
 
-      document.getElementById("listViewBtn").className =
-        view === "list"
-          ? "text-xs px-3 py-1.5 rounded border border-ember bg-ember text-forest-900 font-semibold"
-          : "text-xs px-3 py-1.5 rounded border border-forest-600 text-cream-dim hover:text-cream";
-
-      applyFilters();
-    }
-
-    function handleSearch(value) {
-      currentSearch = value.trim().toLowerCase();
-      applyFilters();
-    }
-
-    function applyFilters() {
-      const filtered = currentSearch
-        ? cachedItems.filter((item) => item.name.toLowerCase().includes(currentSearch))
-        : cachedItems;
-
-      renderMenu(filtered);
-    }
-
-    function scrollToCategory(catId) {
-      closeDrawer();
-      const el = document.getElementById(catId);
-      if (el) {
-        setTimeout(() => {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 150);
+      function openDrawer() {
+        document.getElementById("drawer").classList.add("is-open");
+        document.getElementById("drawerOverlay").classList.add("is-open");
       }
+
+      function closeDrawer() {
+        document.getElementById("drawer").classList.remove("is-open");
+        document.getElementById("drawerOverlay").classList.remove("is-open");
+      }
+
+      function startDonation() {
+      fetch("/api/payment/create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentMethod: "card" })
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.checkoutUrl) {
+            window.location.href = data.checkoutUrl;
+          } else {
+            console.error("No checkout URL returned:", data);
+          }
+        })
+        .catch((err) => {
+          console.error("Payment initiation failed:", err);
+        });
     }
 
-    function slugify(text) {
-      return "cat-" + text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    }
+      function setView(view) {
+        currentView = view;
 
-    function renderCategoryNav(categories) {
-      const list = document.getElementById("catDrawerList");
+        const menu = document.getElementById("menu");
+        menu.className =
+          view === "grid" ? "view-grid grid grid-cols-2 gap-4" : "space-y-8";
 
-      list.innerHTML = categories
-        .map(
-          (cat) => `
+        document.getElementById("gridViewBtn").className =
+          view === "grid"
+            ? "text-xs px-3 py-1.5 rounded border border-ember bg-ember text-forest-900 font-semibold"
+            : "text-xs px-3 py-1.5 rounded border border-forest-600 text-cream-dim hover:text-cream";
+
+        document.getElementById("listViewBtn").className =
+          view === "list"
+            ? "text-xs px-3 py-1.5 rounded border border-ember bg-ember text-forest-900 font-semibold"
+            : "text-xs px-3 py-1.5 rounded border border-forest-600 text-cream-dim hover:text-cream";
+
+        applyFilters();
+      }
+
+      function handleSearch(value) {
+        currentSearch = value.trim().toLowerCase();
+        applyFilters();
+      }
+
+      function applyFilters() {
+        const filtered = currentSearch
+          ? cachedItems.filter((item) =>
+              item.name.toLowerCase().includes(currentSearch),
+            )
+          : cachedItems;
+
+        renderMenu(filtered);
+      }
+
+      function scrollToCategory(catId) {
+        closeDrawer();
+        const el = document.getElementById(catId);
+        if (el) {
+          setTimeout(() => {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 150);
+        }
+      }
+
+      function slugify(text) {
+        return "cat-" + text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      }
+
+      function renderCategoryNav(categories) {
+        const list = document.getElementById("catDrawerList");
+
+        list.innerHTML = categories
+          .map(
+            (cat) => `
             <button
               class="cat-row w-full flex items-center gap-3 px-5 py-3 text-left text-sm text-cream"
               data-cat="${slugify(cat)}"
@@ -330,68 +388,68 @@
               </span>
               ${cat}
             </button>
-          `
-        )
-        .join("");
-    }
-
-    function setActiveCategory(catId) {
-      document.querySelectorAll(".cat-row").forEach((el) => {
-        el.classList.toggle("is-active", el.dataset.cat === catId);
-      });
-    }
-
-    function setupScrollSpy() {
-      if (sectionObserver) {
-        sectionObserver.disconnect();
+          `,
+          )
+          .join("");
       }
 
-      const sections = document.querySelectorAll("[data-section]");
+      function setActiveCategory(catId) {
+        document.querySelectorAll(".cat-row").forEach((el) => {
+          el.classList.toggle("is-active", el.dataset.cat === catId);
+        });
+      }
 
-      sectionObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setActiveCategory(entry.target.id);
-            }
-          });
-        },
-        {
-          rootMargin: "-15% 0px -70% 0px",
-          threshold: 0
+      function setupScrollSpy() {
+        if (sectionObserver) {
+          sectionObserver.disconnect();
         }
-      );
 
-      sections.forEach((section) => sectionObserver.observe(section));
-    }
+        const sections = document.querySelectorAll("[data-section]");
 
-    function renderMenu(items) {
-      const menu = document.getElementById("menu");
+        sectionObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setActiveCategory(entry.target.id);
+              }
+            });
+          },
+          {
+            rootMargin: "-15% 0px -70% 0px",
+            threshold: 0,
+          },
+        );
 
-      if (!items.length) {
-        menu.innerHTML = currentSearch
-          ? `
+        sections.forEach((section) => sectionObserver.observe(section));
+      }
+
+      function renderMenu(items) {
+        const menu = document.getElementById("menu");
+
+        if (!items.length) {
+          menu.innerHTML = currentSearch
+            ? `
             <p class="text-center text-cream-dim text-sm py-16 col-span-2">
               No dishes match &ldquo;${currentSearch}&rdquo;.
             </p>
           `
-          : `
+            : `
             <p class="text-center text-cream-dim text-sm py-16 col-span-2">
               Nothing on the pass right now.
             </p>
           `;
-        if (sectionObserver) sectionObserver.disconnect();
-        return;
-      }
+          if (sectionObserver) sectionObserver.disconnect();
+          return;
+        }
 
-      const categories = [...new Set(items.map((item) => item.category))];
+        const categories = [...new Set(items.map((item) => item.category))];
 
-      let html = "";
+        let html = "";
 
-      categories.forEach((cat) => {
-        const catItems = items.filter((item) => item.category === cat);
+        categories.forEach((cat) => {
+          const catItems = items.filter((item) => item.category === cat);
 
-        html += `
+          html += `
           <div id="${slugify(cat)}" data-section class="${currentView === "grid" ? "col-span-2" : ""} scroll-mt-24">
             <h3 class="font-display text-xl text-ember mb-4 mt-2">${cat}</h3>
             <div class="${currentView === "grid" ? "grid grid-cols-2 gap-4" : "space-y-8"}">
@@ -399,14 +457,14 @@
             </div>
           </div>
         `;
-      });
+        });
 
-      menu.innerHTML = html;
-      setupScrollSpy();
-    }
+        menu.innerHTML = html;
+        setupScrollSpy();
+      }
 
-    function renderItemCard(item) {
-      return `
+      function renderItemCard(item) {
+        return `
         <div class="menu-item bg-forest-700 border border-forest-600 rounded-lg overflow-hidden">
           <div class="flex items-baseline justify-between px-4 pt-4">
             <h2 class="font-display text-lg">${item.name}</h2>
@@ -419,20 +477,22 @@
             ${item.description || ""}
           </p>
 
-          <model-viewer
-            src="${item.modelUrl}"
-            alt="${item.name}"
-            ar
-            ar-modes="webxr scene-viewer quick-look"
-            ar-scale="auto"
-            ar-placement="floor"
-            camera-controls
-            auto-rotate
-            camera-orbit="0deg 45deg 180deg"
-            shadow-intensity="1"
-            class="w-full h-[320px] bg-forest-900"
-            id="mv-${item._id}"
-          ></model-viewer>
+    <model-viewer
+      src="${item.modelUrl}"
+      alt="${item.name}"
+      ar
+      ar-modes="webxr scene-viewer quick-look"
+      ar-scale="fixed"
+      ar-placement="floor"
+      camera-controls
+      auto-rotate
+      camera-orbit="0deg 45deg 180deg"
+      min-camera-orbit="auto 20deg auto"
+      max-camera-orbit="auto 80deg auto"
+      shadow-intensity="1"
+      class="w-full h-[320px] bg-forest-900"
+      id="mv-${item._id}"
+    ></model-viewer>
 
           <button
           class=" block mx-auto px-4 py-2.5 rounded-md 
@@ -444,35 +504,34 @@
           </button>
         </div>
       `;
-    }
+      }
 
-    fetch("/api/menu")
-      .then((res) => res.json())
-      .then((items) => {
-        cachedItems = items;
+      fetch("/api/menu")
+        .then((res) => res.json())
+        .then((items) => {
+          cachedItems = items;
 
-        if (!items.length) {
-          document.getElementById("menu").innerHTML = `
+          if (!items.length) {
+            document.getElementById("menu").innerHTML = `
             <p class="text-center text-cream-dim text-sm py-16">
               Nothing on the pass right now.
             </p>
           `;
-          return;
-        }
+            return;
+          }
 
-        const categories = [...new Set(items.map((item) => item.category))];
-        renderCategoryNav(categories);
-        setView("list");
-      })
-      .catch((err) => {
-        document.getElementById("menu").innerHTML = `
+          const categories = [...new Set(items.map((item) => item.category))];
+          renderCategoryNav(categories);
+          setView("list");
+        })
+        .catch((err) => {
+          document.getElementById("menu").innerHTML = `
           <p class="text-center text-cream-dim text-sm py-16">
             Could not load the menu &mdash; check the connection.
           </p>
         `;
-        console.error(err);
-      });
-  </script>
-
-</body>
+          console.error(err);
+        });
+    </script>
+  </body>
 </html>

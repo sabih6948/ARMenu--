@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import menuRoutes from './routes/menuRoutes.js';
 import authRoutes from './routes/authRoutes.js'
+import payRoutes from './routes/payRoutes.js';
 import qrRoutes from './routes/qrRoutes.js';
 
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/menu', menuRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/payment' , payRoutes);
 app.use('/api/qr', qrRoutes);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
