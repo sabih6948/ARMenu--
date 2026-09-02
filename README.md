@@ -1,7 +1,7 @@
 # ARMenu
 An augmented-reality restaurant menu. Customers scan a QR code at their table, browse the menu on their own phone, and place a true-to-scale 3D model of any dish in front of them — before they order.
 
-**Live demo:** `https://ar-menu-sigma-eosin.vercel.app` *(update with your actual deployed URL)*
+**Live demo:** `https://ar-menu-sigma-eosin.vercel.app`
 
 ---
 
